@@ -5,7 +5,7 @@ sealed class ViewState {
 
     data object Loading : ViewState()
 
-    data class Error(val code: Int, val message: String? = null)
+    data class Error(val code: Int, val message: String? = null) : ViewState()
 
-    data class Success<T:Any>(val data: T)
+    data class Success<T : Any>(val data: T) : ViewState()
 }
