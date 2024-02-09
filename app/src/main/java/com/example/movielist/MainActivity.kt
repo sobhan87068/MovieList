@@ -10,12 +10,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,8 +55,7 @@ class MainActivity : ComponentActivity() {
         // Update the uiState
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.state.onEach { uiState = it }
-                    .collect()
+                viewModel.state.onEach { uiState = it }.collect()
             }
         }
 
@@ -64,7 +68,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Switcher(uiState)
+                    Switcher(uiState) {
+                        viewModel.submitAction(HomeAction.LoadMore)
+                    }
                 }
             }
         }
@@ -72,12 +78,24 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Switcher(state: ViewState) {
+fun Switcher(state: ViewState, onEndReached: () -> Unit) {
+    val scrollState = rememberLazyGridState()
+    val endReached by remember {
+        derivedStateOf {
+            !scrollState.canScrollForward
+        }
+    }
+
+    LaunchedEffect(key1 = endReached) {
+        if (endReached)
+            onEndReached()
+    }
+
     when (state) {
         HomeState.Idle -> Text(text = "start")
         HomeState.Loading -> Loading()
         is HomeState.Error -> Error()
-        is HomeState.Success -> {
+        is HomeState.NewPage -> {
             Column {
                 Box(modifier = Modifier.fillMaxWidth()) {
                     Text(text = "Discover", modifier = Modifier.align(Alignment.Center))
@@ -89,7 +107,14 @@ fun Switcher(state: ViewState) {
                             .size(36.dp)
                     )
                 }
-                Home(movies = state.data)
+                Home(
+                    movies = state.data, scrollState = scrollState,
+                    modifier = Modifier.weight(1f, fill = true)
+                )
+
+                if (state is HomeState.NewPage.PaginationLoading) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                }
             }
         }
     }
@@ -98,5 +123,5 @@ fun Switcher(state: ViewState) {
 @Preview
 @Composable
 fun SwitcherPreview() {
-    Switcher(state = HomeState.Loading)
+    Switcher(state = HomeState.Loading) {}
 }

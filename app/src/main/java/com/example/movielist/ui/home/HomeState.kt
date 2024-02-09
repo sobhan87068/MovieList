@@ -8,11 +8,21 @@ sealed class HomeState : ViewState {
 
     data object Loading : HomeState()
 
-    data object PaginationLoading : HomeState()
-
-    data class PaginationError(val code: Int, val message: String? = null) : HomeState()
-
     data class Error(val code: Int, val message: String? = null) : HomeState()
 
-    data class Success(val data: List<Movie>) : HomeState()
+    sealed class NewPage(val data: List<Movie>) : HomeState() {
+        data class PaginationLoading(
+            private val currentMovies: List<Movie>
+        ) : NewPage(currentMovies)
+
+        data class Success(
+            private val currentMovies: List<Movie>
+        ) : NewPage(currentMovies)
+
+        data class PaginationError(
+            private val currentMovies: List<Movie>,
+            val code: Int,
+            val message: String? = null
+        ) : NewPage(currentMovies)
+    }
 }

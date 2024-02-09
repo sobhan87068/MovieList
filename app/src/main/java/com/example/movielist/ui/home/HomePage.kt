@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,18 +29,22 @@ import com.example.movielist.R
 import com.example.movielist.data.model.Movie
 
 @Composable
-fun Home(movies: List<Movie>) {
+fun Home(movies: List<Movie>, scrollState: LazyGridState, modifier: Modifier = Modifier) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
+        columns = GridCells.Fixed(CELL_COUNT),
         contentPadding = PaddingValues(horizontal = 5.dp),
+        userScrollEnabled = true,
+        state = scrollState, modifier = modifier
     ) {
-        items(items = movies, key = { movie ->
-            movie.id
+        items(items = movies, key = { item ->
+            item.id
         }) {
             MovieCard(movie = it)
         }
     }
 }
+
+private const val CELL_COUNT = 3
 
 @Composable
 fun MovieCard(movie: Movie) {
@@ -72,11 +78,11 @@ fun MovieCard(movie: Movie) {
 fun HomePreview() {
     Home(
         movies = listOf(
-            Movie(-1, "title", ""),
-            Movie(-2, "title", ""),
-            Movie(-3, "title", ""),
-            Movie(-4, "title", ""),
-            Movie(-5, "title", ""),
-        )
+            Movie(1, "title", ""),
+            Movie(2, "title", ""),
+            Movie(3, "title", ""),
+            Movie(4, "title", ""),
+            Movie(5, "title", ""),
+        ), scrollState = rememberLazyGridState()
     )
 }

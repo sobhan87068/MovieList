@@ -13,7 +13,7 @@ class RepositoryImpl @Inject constructor(
         return flow {
             val pageData = dataSource.getMoviesList(page)
             emit(pageData.movies.map { remoteMovie ->
-                Movie(remoteMovie.id, remoteMovie.title, remoteMovie.posterPath)
+                Movie(remoteMovie.id, remoteMovie.title ?: "", remoteMovie.posterPath ?: "")
             })
         }
     }
