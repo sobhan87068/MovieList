@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<A:ViewAction>() : ViewModel() {
-    private val _state = MutableStateFlow<ViewState>(ViewState.Idle)
+abstract class BaseViewModel<A : ViewAction, S : ViewState>(initialState: S) : ViewModel() {
+    private val _state = MutableStateFlow(initialState)
     val state = _state.asStateFlow()
 
     private val _actions = Channel<A>(Channel.UNLIMITED)
@@ -24,7 +24,7 @@ abstract class BaseViewModel<A:ViewAction>() : ViewModel() {
         }
     }
 
-    protected suspend fun updateState(state: ViewState) {
+    protected suspend fun updateState(state: S) {
         _state.emit(state)
     }
 
