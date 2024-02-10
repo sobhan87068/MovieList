@@ -6,9 +6,7 @@ import com.example.movielist.data.result.ApiResult
 import com.example.movielist.domain.GetUpcomingUseCase
 import com.example.movielist.domain.RetrieveMoviesPageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,13 +18,6 @@ class HomeViewModel @Inject constructor(
 
     private var nextPage = 1
     private var totalPages = 1
-
-    private val cachedMovies = getUpcomingUseCase()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = listOf()
-        )
 
     override fun handleAction(action: HomeAction) {
         if (totalPages < nextPage) return
