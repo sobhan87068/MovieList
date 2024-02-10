@@ -1,6 +1,7 @@
 package com.example.movielist
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -50,12 +51,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var uiState: HomeState by mutableStateOf(HomeState.Loading)
+        var uiState: HomeState by mutableStateOf(HomeState.Idle)
 
         // Update the uiState
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.state.onEach { uiState = it }.collect()
+                viewModel.state.onEach {
+                    Log.i("endReached", "new State: $it")
+                    uiState = it
+                }.collect()
             }
         }
 
@@ -87,6 +91,7 @@ fun Switcher(state: ViewState, onEndReached: () -> Unit) {
     }
 
     LaunchedEffect(key1 = endReached) {
+        Log.i("endReached", endReached.toString())
         if (endReached)
             onEndReached()
     }

@@ -64,6 +64,7 @@ secrets {
 
 dependencies {
     val hiltVersion = "2.50"
+    val roomVersion = "2.6.1"
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
@@ -91,4 +92,9 @@ dependencies {
     implementation("com.google.dagger:hilt-android:${hiltVersion}")
     ksp("com.google.dagger:hilt-android-compiler:${hiltVersion}")
     implementation("javax.inject:javax.inject:1")
+
+    //room
+    implementation("androidx.room:room-runtime:${roomVersion}")
+    implementation("androidx.room:room-ktx:${roomVersion}")
+    ksp("androidx.room:room-compiler:${roomVersion}")
 }

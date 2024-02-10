@@ -1,8 +1,11 @@
 package com.example.movielist.data.repository
 
 import com.example.movielist.data.model.Movie
+import com.example.movielist.data.result.ApiResult
 import kotlinx.coroutines.flow.Flow
 
 interface Repository {
-    suspend fun getMoviesList(page: Int): Flow<List<Movie>>
+    fun getMoviesList(): Flow<List<Movie>>
+
+    suspend fun syncMovies(page: Int): Flow<ApiResult>
 }

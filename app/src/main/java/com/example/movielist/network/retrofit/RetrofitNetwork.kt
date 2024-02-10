@@ -4,7 +4,6 @@ import com.example.movielist.BuildConfig
 import com.example.movielist.network.NetworkDataSource
 import com.example.movielist.network.model.UpcomingPage
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import okhttp3.Call
 import okhttp3.MediaType.Companion.toMediaType
@@ -21,11 +20,6 @@ private interface RetrofitNetworkApi {
         @Query("page") page: Int
     ): UpcomingPage
 }
-
-@Serializable
-private data class NetworkResponse<T>(
-    val data: T,
-)
 
 private const val BASE_URL = BuildConfig.API_URL
 
