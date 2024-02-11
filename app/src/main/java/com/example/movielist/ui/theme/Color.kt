@@ -2,10 +2,16 @@ package com.example.movielist.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val PrimaryDark = Color(0xFF131313)
+val PrimaryLight = Color(0xFFFFFFFF)
+val Secondary = Color(0xFF4BC381)
+val Tertiary = Color(0xFFFF3D00)
+val Surface = Color(0xFF1C3051)
+val OnSurfaceDark = Color(0xFFFFFFFF)
+val OnSurfaceLight = Color(0xFF000000)
+val OnSurfaceVariant = Color(0xFF7E91B7)
+val OnPrimaryDark = Color(0xFFCBC8C8)
+val OnPrimaryLight = Color(0xFF000000)
+val Grey10 = Color(0xFF191A1F)
+val Grey40 = Color(0xFF44464E)
+val Red = Color(0xFFEB5757)

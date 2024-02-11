@@ -19,12 +19,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.movielist.R
 import com.example.movielist.data.model.Movie
 
@@ -53,7 +57,7 @@ fun MovieCard(movie: Movie) {
         modifier = Modifier
             .fillMaxWidth(.3f)
             .wrapContentHeight()
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = 8.dp, vertical = 20.dp)
             .clickable {
                 Toast
                     .makeText(context, movie.title, Toast.LENGTH_LONG)
@@ -66,10 +70,16 @@ fun MovieCard(movie: Movie) {
             contentDescription = "thumbnail",
             modifier = Modifier
                 .fillMaxWidth()
-                .background(shape = RoundedCornerShape(10.dp), color = Color.Transparent),
+                .padding(bottom = 20.dp)
+                .background(shape = RoundedCornerShape(10.dp), color = Color.Transparent)
+                .shadow(elevation = 4.dp, shape = RoundedCornerShape(10.dp)),
             contentScale = ContentScale.FillWidth
         )
-        Text(text = movie.title)
+        Text(
+            text = movie.title, fontWeight = FontWeight(600),
+            fontSize = 12.sp, lineHeight = 14.sp,
+            maxLines = 1, overflow = TextOverflow.Ellipsis
+        )
     }
 }
 

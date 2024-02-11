@@ -6,14 +6,17 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -30,10 +33,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -44,7 +51,10 @@ import com.example.movielist.ui.home.HomeAction
 import com.example.movielist.ui.home.HomeState
 import com.example.movielist.ui.home.HomeViewModel
 import com.example.movielist.ui.home.Loading
+import com.example.movielist.ui.theme.Grey10
+import com.example.movielist.ui.theme.Grey40
 import com.example.movielist.ui.theme.MovieListTheme
+import com.example.movielist.ui.theme.Red
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -103,44 +113,108 @@ fun Switcher(state: ViewState, onEndReached: () -> Unit) {
     when (state) {
         HomeState.Idle -> Text(text = "start")
         HomeState.Loading -> Loading()
-        is HomeState.Error -> Error()
+        is HomeState.Error -> Error(onEndReached)
         is HomeState.NewPage -> {
-            Column {
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    Text(text = "Discover", modifier = Modifier.align(Alignment.Center))
-                    Image(
-                        painter = painterResource(id = R.drawable.bazaar_logo),
-                        contentDescription = "logo",
+            Box {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .zIndex(1f)
+                ) {
+                    Box(
                         modifier = Modifier
-                            .align(alignment = Alignment.CenterEnd)
-                            .size(36.dp)
-                    )
-                }
-                Home(
-                    movies = state.data, scrollState = scrollState,
-                    modifier = Modifier.weight(1f, fill = true)
-                )
-
-                if (state is HomeState.NewPage.PaginationLoading) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-                } else if (state is HomeState.NewPage.PaginationError) {
-                    Row(modifier = Modifier.padding(horizontal = 20.dp)) {
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp)
+                    ) {
                         Text(
-                            text = state.message ?: "Something went wrong",
-                            modifier = Modifier.weight(1f)
+                            text = "Discover",
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(vertical = 20.dp),
+                            color = MaterialTheme.colorScheme.tertiary,
+                            lineHeight = 29.sp,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight(600)
                         )
+                        Image(
+                            painter = painterResource(id = R.drawable.bazaar_logo),
+                            contentDescription = "logo",
+                            modifier = Modifier
+                                .align(alignment = Alignment.CenterEnd)
+                                .padding(end = 20.dp)
+                                .size(36.dp)
+                        )
+                    }
+                    Home(
+                        movies = state.data, scrollState = scrollState,
+                        modifier = Modifier.weight(1f, fill = true)
+                    )
 
-                        OutlinedButton(
-                            onClick = {},
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = Color(0xff191A1F)
-                            ), shape = RoundedCornerShape(4.dp),
-                            border = BorderStroke(width = 1.dp, color = Color(0xff44464E))
+                    if (state is HomeState.NewPage.PaginationLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(vertical = 20.dp),
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    } else if (state is HomeState.NewPage.PaginationError) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 36.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(text = "Try Again")
+                            Text(
+                                text = state.message ?: "Something went wrong",
+                                modifier = Modifier.weight(1f)
+                            )
+
+                            OutlinedButton(
+                                onClick = onEndReached,
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    containerColor = Grey10
+                                ), shape = RoundedCornerShape(4.dp),
+                                border = BorderStroke(width = 1.dp, color = Grey40)
+                            ) {
+                                Text(
+                                    text = "Try Again", color = Red, lineHeight = 20.sp,
+                                    fontWeight = FontWeight(400), fontSize = 14.sp
+                                )
+                            }
                         }
                     }
                 }
+
+                Box(
+                    modifier = Modifier
+                        .offset(y = (-29).dp)
+                        .padding(end = 10.dp)
+                        .size(300.dp)
+                        .background(
+                            shape = CircleShape,
+                            brush = Brush.radialGradient(
+                                colors = listOf(
+                                    Color(0x1AFFFFFF),
+                                    Color(0x00FFFFFF),
+                                )
+                            )
+                        )
+                        .align(Alignment.TopEnd)
+                )
+
+                Box(
+                    modifier = Modifier
+                        .padding(bottom = 100.dp, start = 12.dp)
+                        .size(300.dp)
+                        .background(
+                            shape = CircleShape,
+                            brush = Brush.radialGradient(
+                                colors = listOf(
+                                    Color(0x0AFFFFFF),
+                                    Color(0x00FFFFFF),
+                                )
+                            )
+                        )
+                        .align(Alignment.BottomStart)
+                )
             }
         }
     }
@@ -149,5 +223,5 @@ fun Switcher(state: ViewState, onEndReached: () -> Unit) {
 @Preview
 @Composable
 fun SwitcherPreview() {
-    Switcher(state = HomeState.Loading) {}
+    Switcher(state = HomeState.NewPage.PaginationError(listOf())) {}
 }
