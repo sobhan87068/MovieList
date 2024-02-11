@@ -7,6 +7,7 @@ import com.example.movielist.domain.GetUpcomingUseCase
 import com.example.movielist.domain.RetrieveMoviesPageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,6 +20,8 @@ class HomeViewModel @Inject constructor(
     private var nextPage = 1
     private var totalPages = 1
 
+    private val currentMovies = getUpcomingUseCase()
+
     override fun handleAction(action: HomeAction) {
         if (totalPages < nextPage) return
         if (state.value is HomeState.Loading
@@ -26,7 +29,11 @@ class HomeViewModel @Inject constructor(
         ) return
 
         viewModelScope.launch {
-            getUpcomingUseCase().combine(retrieveMoviesPageUseCase(nextPage)) { cachedMovies, apiResult ->
+            currentMovies.combine(
+                retrieveMoviesPageUseCase(nextPage).onEach {
+                    if (it is ApiResult.ApiSuccess) nextPage++
+                }
+            ) { cachedMovies, apiResult ->
                 when (apiResult) {
                     ApiResult.ApiLoading -> {
                         if (cachedMovies.isEmpty()) {
@@ -62,7 +69,6 @@ class HomeViewModel @Inject constructor(
                     )
                 }*/.collect {
                     updateState(it)
-                    nextPage++
                 }
         }
     }
