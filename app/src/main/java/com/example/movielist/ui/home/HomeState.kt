@@ -8,7 +8,7 @@ sealed class HomeState : ViewState {
 
     data object Loading : HomeState()
 
-    data class Error(val code: Int, val message: String? = null) : HomeState()
+    data class Error(val message: String? = null) : HomeState()
 
     sealed class NewPage(val data: List<Movie>) : HomeState() {
         data class PaginationLoading(
@@ -21,7 +21,6 @@ sealed class HomeState : ViewState {
 
         data class PaginationError(
             private val currentMovies: List<Movie>,
-            val code: Int,
             val message: String? = null
         ) : NewPage(currentMovies)
     }

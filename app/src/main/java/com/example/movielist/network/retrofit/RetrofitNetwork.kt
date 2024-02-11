@@ -18,7 +18,7 @@ private interface RetrofitNetworkApi {
     @GET("3/movie/upcoming")
     suspend fun getMoviesList(
         @Query("page") page: Int
-    ): UpcomingPage
+    ): Result<UpcomingPage>
 }
 
 private const val BASE_URL = BuildConfig.API_URL
@@ -27,6 +27,7 @@ private const val BASE_URL = BuildConfig.API_URL
 class RetrofitNetwork @Inject constructor(
     networkJson: Json,
     okhttpCallFactory: Call.Factory,
+    resultCallAdapterFactory: ResultCallAdapterFactory
 ) : NetworkDataSource {
 
     private val moviesApi = Retrofit.Builder()
@@ -35,10 +36,11 @@ class RetrofitNetwork @Inject constructor(
         .addConverterFactory(
             networkJson.asConverterFactory("application/json".toMediaType()),
         )
+        .addCallAdapterFactory(resultCallAdapterFactory)
         .build()
         .create(RetrofitNetworkApi::class.java)
 
-    override suspend fun getMoviesList(page: Int): UpcomingPage {
+    override suspend fun getMoviesList(page: Int): Result<UpcomingPage> {
         return moviesApi.getMoviesList(page)
     }
 }

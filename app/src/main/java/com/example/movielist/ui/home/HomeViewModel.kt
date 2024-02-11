@@ -50,26 +50,18 @@ class HomeViewModel @Inject constructor(
 
                     is ApiResult.ApiError -> {
                         if (cachedMovies.isEmpty()) {
-                            HomeState.Error(apiResult.code, apiResult.message)
+                            HomeState.Error(apiResult.message)
                         } else {
                             HomeState.NewPage.PaginationError(
                                 cachedMovies,
-                                apiResult.code,
                                 apiResult.message
                             )
                         }
                     }
                 }
+            }.collect {
+                updateState(it)
             }
-                /*.catch {
-                    updateState(
-                    if (currentItems.isEmpty()) {
-                        HomeState.Error(code = 500, it.message)
-                    } else HomeState.NewPage.PaginationError(currentItems, code = 500, it.message)
-                    )
-                }*/.collect {
-                    updateState(it)
-                }
         }
     }
 }

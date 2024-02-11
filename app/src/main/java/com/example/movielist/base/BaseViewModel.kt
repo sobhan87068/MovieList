@@ -1,6 +1,5 @@
 package com.example.movielist.base
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
@@ -38,7 +37,6 @@ abstract class BaseViewModel<A : ViewAction, S : ViewState>(initialState: S) : V
 
     fun submitAction(action: A) {
         viewModelScope.launch {
-            Log.i("endReached", "action submitted")
             _actions.send(action)
         }
     }

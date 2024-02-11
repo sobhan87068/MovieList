@@ -1,19 +1,24 @@
 package com.example.movielist
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,7 +63,6 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.state.onEach {
-                    Log.i("endReached", "new State: $it")
                     uiState = it
                 }.collect()
             }
@@ -91,7 +96,6 @@ fun Switcher(state: ViewState, onEndReached: () -> Unit) {
     }
 
     LaunchedEffect(key1 = endReached) {
-        Log.i("endReached", endReached.toString())
         if (endReached)
             onEndReached()
     }
@@ -119,6 +123,23 @@ fun Switcher(state: ViewState, onEndReached: () -> Unit) {
 
                 if (state is HomeState.NewPage.PaginationLoading) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                } else if (state is HomeState.NewPage.PaginationError) {
+                    Row(modifier = Modifier.padding(horizontal = 20.dp)) {
+                        Text(
+                            text = state.message ?: "Something went wrong",
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        OutlinedButton(
+                            onClick = {},
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = Color(0xff191A1F)
+                            ), shape = RoundedCornerShape(4.dp),
+                            border = BorderStroke(width = 1.dp, color = Color(0xff44464E))
+                        ) {
+                            Text(text = "Try Again")
+                        }
+                    }
                 }
             }
         }

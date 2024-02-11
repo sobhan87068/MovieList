@@ -1,6 +1,7 @@
 package com.example.movielist.di
 
 import com.example.movielist.BuildConfig
+import com.example.movielist.network.retrofit.ResultCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,6 +15,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+
+    @Provides
+    @Singleton
+    fun resultCallAdapterFactory() = ResultCallAdapterFactory()
 
     @Provides
     @Singleton

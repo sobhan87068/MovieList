@@ -28,15 +28,19 @@ class RepositoryImpl @Inject constructor(
     override suspend fun syncMovies(page: Int): Flow<ApiResult> {
         return flow {
             emit(ApiResult.ApiLoading)
-            val networkMovies = dataSource.getMoviesList(page)
-
-            withContext(Dispatchers.IO) {
-                movieDao.updateMovies(
-                    networkMovies.movies.map(RemoteMovie::toDbEntity),
-                    page == 1
-                )
-            }
-            emit(ApiResult.ApiSuccess(networkMovies.totalPages))
+            dataSource.getMoviesList(page)
+                .onSuccess {
+                    withContext(Dispatchers.IO) {
+                        movieDao.updateMovies(
+                            it.movies.map(RemoteMovie::toDbEntity),
+                            page == 1
+                        )
+                    }
+                    emit(ApiResult.ApiSuccess(it.totalPages))
+                }
+                .onFailure {
+                    emit(ApiResult.ApiError(it.localizedMessage))
+                }
         }
     }
 }
