@@ -6,8 +6,6 @@ import com.example.movielist.data.model.Movie
 sealed class HomeState : ViewState {
     data object Idle : HomeState()
 
-    data object Loading : HomeState()
-
     data class Error(val message: String? = null) : HomeState()
 
     sealed class NewPage(val data: List<Movie>) : HomeState() {

@@ -5,13 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -35,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,11 +43,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.movielist.base.ViewState
 import com.example.movielist.ui.home.Error
+import com.example.movielist.ui.home.FloatingBannerContainer
 import com.example.movielist.ui.home.Home
 import com.example.movielist.ui.home.HomeAction
 import com.example.movielist.ui.home.HomeState
 import com.example.movielist.ui.home.HomeViewModel
-import com.example.movielist.ui.home.Loading
 import com.example.movielist.ui.theme.Grey10
 import com.example.movielist.ui.theme.Grey40
 import com.example.movielist.ui.theme.MovieListTheme
@@ -112,39 +109,16 @@ fun Switcher(state: ViewState, onEndReached: () -> Unit) {
 
     when (state) {
         HomeState.Idle -> Text(text = "start")
-        HomeState.Loading -> Loading()
         is HomeState.Error -> Error(onEndReached)
         is HomeState.NewPage -> {
-            Box {
+            FloatingBannerContainer(
+                state !is HomeState.NewPage.PaginationLoading || state.data.isNotEmpty(),
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .zIndex(1f)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 12.dp)
-                    ) {
-                        Text(
-                            text = "Discover",
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .padding(vertical = 20.dp),
-                            color = MaterialTheme.colorScheme.tertiary,
-                            lineHeight = 29.sp,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight(600)
-                        )
-                        Image(
-                            painter = painterResource(id = R.drawable.bazaar_logo),
-                            contentDescription = "logo",
-                            modifier = Modifier
-                                .align(alignment = Alignment.CenterEnd)
-                                .padding(end = 20.dp)
-                                .size(36.dp)
-                        )
-                    }
                     Home(
                         movies = state.data, scrollState = scrollState,
                         modifier = Modifier.weight(1f, fill = true)

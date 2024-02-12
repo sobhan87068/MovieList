@@ -24,8 +24,7 @@ class HomeViewModel @Inject constructor(
 
     override fun handleAction(action: HomeAction) {
         if (totalPages < nextPage) return
-        if (state.value is HomeState.Loading
-            || state.value is HomeState.NewPage.PaginationLoading
+        if (state.value is HomeState.NewPage.PaginationLoading
         ) return
 
         viewModelScope.launch {
@@ -36,11 +35,7 @@ class HomeViewModel @Inject constructor(
             ) { cachedMovies, apiResult ->
                 when (apiResult) {
                     ApiResult.ApiLoading -> {
-                        if (cachedMovies.isEmpty()) {
-                            HomeState.Loading
-                        } else {
-                            HomeState.NewPage.PaginationLoading(cachedMovies)
-                        }
+                        HomeState.NewPage.PaginationLoading(cachedMovies)
                     }
 
                     is ApiResult.ApiSuccess -> {
