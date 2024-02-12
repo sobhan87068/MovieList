@@ -30,7 +30,10 @@ data class RemoteMovie(
         if (title != other.title) return false
         if (overview != other.overview) return false
         if (backdropPath != other.backdropPath) return false
-        if (!genreIds.contentEquals(other.genreIds)) return false
+        if (genreIds != null) {
+            if (other.genreIds == null) return false
+            if (!genreIds.contentEquals(other.genreIds)) return false
+        } else if (other.genreIds != null) return false
         if (originalLanguage != other.originalLanguage) return false
         if (originalTitle != other.originalTitle) return false
         if (popularity != other.popularity) return false
@@ -44,19 +47,19 @@ data class RemoteMovie(
 
     override fun hashCode(): Int {
         var result = id
-        result = 31 * result + title.hashCode()
-        result = 31 * result + overview.hashCode()
-        result = 31 * result + backdropPath.hashCode()
-        result = 31 * result + genreIds.contentHashCode()
-        result = 31 * result + originalLanguage.hashCode()
-        result = 31 * result + originalTitle.hashCode()
-        result = 31 * result + popularity.hashCode()
-        result = 31 * result + posterPath.hashCode()
-        result = 31 * result + releaseDate.hashCode()
-        result = 31 * result + video.hashCode()
-        result = 31 * result + voteAverage.hashCode()
-        result = 31 * result + voteCount.hashCode()
-        result = 31 * result + adult.hashCode()
+        result = 31 * result + (title?.hashCode() ?: 0)
+        result = 31 * result + (overview?.hashCode() ?: 0)
+        result = 31 * result + (backdropPath?.hashCode() ?: 0)
+        result = 31 * result + (genreIds?.contentHashCode() ?: 0)
+        result = 31 * result + (originalLanguage?.hashCode() ?: 0)
+        result = 31 * result + (originalTitle?.hashCode() ?: 0)
+        result = 31 * result + (popularity?.hashCode() ?: 0)
+        result = 31 * result + (posterPath?.hashCode() ?: 0)
+        result = 31 * result + (releaseDate?.hashCode() ?: 0)
+        result = 31 * result + (video?.hashCode() ?: 0)
+        result = 31 * result + (voteAverage?.hashCode() ?: 0)
+        result = 31 * result + (voteCount ?: 0)
+        result = 31 * result + (adult?.hashCode() ?: 0)
         return result
     }
 }

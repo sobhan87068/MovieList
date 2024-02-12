@@ -1,7 +1,6 @@
 package com.example.movielist.ui.home
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -29,6 +28,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.example.movielist.BuildConfig
 import com.example.movielist.R
 import com.example.movielist.data.model.Movie
 
@@ -65,8 +67,14 @@ fun MovieCard(movie: Movie) {
             },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.sample_poster),
+        AsyncImage(
+            model = ImageRequest.Builder(context)
+                .data("${BuildConfig.IMAGE_BASE_URL}${movie.thumbnail}")
+                .error(R.drawable.sad_face)
+                .fallback(R.drawable.sad_face)
+                .crossfade(true)
+                .build(),
+            placeholder = painterResource(R.drawable.bazaar_logo),
             contentDescription = "thumbnail",
             modifier = Modifier
                 .fillMaxWidth()
