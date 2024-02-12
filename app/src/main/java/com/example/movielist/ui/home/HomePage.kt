@@ -1,5 +1,6 @@
 package com.example.movielist.ui.home
 
+import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -36,8 +38,13 @@ import com.example.movielist.data.model.Movie
 
 @Composable
 fun Home(movies: List<Movie>, scrollState: LazyGridState, modifier: Modifier = Modifier) {
+    val config = LocalConfiguration.current
     LazyVerticalGrid(
-        columns = GridCells.Fixed(CELL_COUNT),
+        columns = GridCells.Fixed(
+            if (config.orientation == Configuration.ORIENTATION_LANDSCAPE)
+                CELL_COUNT_LANDSCAPE
+            else CELL_COUNT_PORTRAIT
+        ),
         contentPadding = PaddingValues(horizontal = 5.dp),
         userScrollEnabled = true,
         state = scrollState, modifier = modifier
@@ -50,7 +57,8 @@ fun Home(movies: List<Movie>, scrollState: LazyGridState, modifier: Modifier = M
     }
 }
 
-private const val CELL_COUNT = 3
+private const val CELL_COUNT_PORTRAIT = 3
+private const val CELL_COUNT_LANDSCAPE = 6
 
 @Composable
 fun MovieCard(movie: Movie) {
