@@ -4,22 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,27 +21,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.movielist.base.ViewState
+import com.example.movielist.ui.designsystem.FloatingBannerContainer
+import com.example.movielist.ui.designsystem.GlowBg
+import com.example.movielist.ui.designsystem.LoadMoreError
 import com.example.movielist.ui.home.Error
-import com.example.movielist.ui.home.FloatingBannerContainer
 import com.example.movielist.ui.home.Home
 import com.example.movielist.ui.home.HomeAction
 import com.example.movielist.ui.home.HomeState
 import com.example.movielist.ui.home.HomeViewModel
-import com.example.movielist.ui.theme.Grey10
-import com.example.movielist.ui.theme.Grey40
 import com.example.movielist.ui.theme.MovieListTheme
-import com.example.movielist.ui.theme.Red
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -132,63 +117,11 @@ fun Switcher(state: ViewState, onEndReached: () -> Unit) {
                             color = MaterialTheme.colorScheme.secondary
                         )
                     } else if (state is HomeState.NewPage.PaginationError) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 36.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = state.message ?: "Something went wrong",
-                                modifier = Modifier.weight(1f)
-                            )
-
-                            OutlinedButton(
-                                onClick = onEndReached,
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    containerColor = Grey10
-                                ), shape = RoundedCornerShape(4.dp),
-                                border = BorderStroke(width = 1.dp, color = Grey40)
-                            ) {
-                                Text(
-                                    text = "Try Again", color = Red, lineHeight = 20.sp,
-                                    fontWeight = FontWeight(400), fontSize = 14.sp
-                                )
-                            }
-                        }
+                        LoadMoreError(message = state.message, onEndReached)
                     }
                 }
 
-                Box(
-                    modifier = Modifier
-                        .offset(y = (-29).dp)
-                        .padding(end = 10.dp)
-                        .size(300.dp)
-                        .background(
-                            shape = CircleShape,
-                            brush = Brush.radialGradient(
-                                colors = listOf(
-                                    Color(0x1AFFFFFF),
-                                    Color(0x00FFFFFF),
-                                )
-                            )
-                        )
-                        .align(Alignment.TopEnd)
-                )
-
-                Box(
-                    modifier = Modifier
-                        .padding(bottom = 100.dp, start = 12.dp)
-                        .size(300.dp)
-                        .background(
-                            shape = CircleShape,
-                            brush = Brush.radialGradient(
-                                colors = listOf(
-                                    Color(0x0AFFFFFF),
-                                    Color(0x00FFFFFF),
-                                )
-                            )
-                        )
-                        .align(Alignment.BottomStart)
-                )
+                GlowBg()
             }
         }
     }

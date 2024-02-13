@@ -1,4 +1,4 @@
-package com.example.movielist.ui.home
+package com.example.movielist.ui.designsystem
 
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
@@ -39,7 +39,7 @@ import com.example.movielist.ui.util.pxToDp
 @Composable
 fun FloatingBannerContainer(
     isFinished: Boolean,
-    content: @Composable BoxScope.() -> Unit = @Composable {}
+    content: @Composable BoxScope.() -> Unit = {}
 ) {
     val context = LocalContext.current
     val animationDuration = 1000
@@ -53,21 +53,21 @@ fun FloatingBannerContainer(
         transitionSpec = { tween(durationMillis = animationDuration) }
     ) {
         if (it) 36.dp else 80.dp
-    }
+    }.value
 
     val logoOffset = transition.animateIntOffset(
         label = "logo offset animation",
         transitionSpec = { tween(durationMillis = animationDuration) }
     ) {
         if (it) IntOffset(
-            x = boxWidth - dpToPx(dp = logoSize.value.value + 20).toInt(),
-            y = dpToPx(dp = 10f).toInt()
+            x = boxWidth - dpToPx(dp = logoSize.value.toInt() + 20),
+            y = dpToPx(dp = 10)
         )
         else IntOffset(
-            x = (boxWidth - dpToPx(dp = logoSize.value.value).toInt()) / 2,
-            y = boxHeight / 2 - dpToPx(dp = logoSize.value.value).toInt()
+            x = (boxWidth - dpToPx(dp = logoSize.value.toInt())) / 2,
+            y = boxHeight / 2 - dpToPx(dp = logoSize.value.toInt())
         )
-    }
+    }.value
 
     val contentAlpha = transition.animateFloat(
         label = "content alpha animation",
@@ -81,9 +81,9 @@ fun FloatingBannerContainer(
             painter = painterResource(id = R.drawable.bazaar_logo),
             contentDescription = "logo",
             modifier = Modifier
-                .size(logoSize.value)
+                .size(logoSize)
                 .offset {
-                    logoOffset.value
+                    logoOffset
                 }
         )
         if (isFinished) {
@@ -101,7 +101,7 @@ fun FloatingBannerContainer(
             CircularProgressIndicator(
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .padding(top = logoSize.value / 2 + 50.dp)
+                    .padding(top = logoSize / 2 + 50.dp)
                     .size(32.dp),
                 color = MaterialTheme.colorScheme.secondary
             )
@@ -110,9 +110,7 @@ fun FloatingBannerContainer(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
-                    top = logoSize.value
-                            + pxToDp(px = logoOffset.value.y.toFloat()).toInt().dp
-                            + 52.dp
+                    top = logoSize + pxToDp(px = logoOffset.y).dp + 52.dp
                 )
                 .alpha(contentAlpha.value)
         ) {
