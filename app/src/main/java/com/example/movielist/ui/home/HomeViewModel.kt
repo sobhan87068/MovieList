@@ -6,6 +6,7 @@ import com.example.movielist.data.result.ApiResult
 import com.example.movielist.domain.GetUpcomingUseCase
 import com.example.movielist.domain.RetrieveMoviesPageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -19,6 +20,7 @@ class HomeViewModel @Inject constructor(
 
     private var nextPage = 1
     private var totalPages = 1
+    private var job: Job? = null
 
     private val currentMovies = getUpcomingUseCase()
 
@@ -27,7 +29,8 @@ class HomeViewModel @Inject constructor(
         if (state.value is HomeState.NewPage.PaginationLoading
         ) return
 
-        viewModelScope.launch {
+        job?.cancel()
+        job = viewModelScope.launch {
             currentMovies.combine(
                 retrieveMoviesPageUseCase(nextPage).onEach {
                     if (it is ApiResult.ApiSuccess) nextPage++
