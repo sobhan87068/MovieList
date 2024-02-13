@@ -1,5 +1,6 @@
 package com.example.movielist.ui.home
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.movielist.R
+import com.example.movielist.ui.theme.MovieListTheme
 
 
 @Composable
@@ -85,8 +87,10 @@ fun Error(onRetry: () -> Unit) {
     }
 }
 
-@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun ErrorPreview() {
-    Error() {}
+    MovieListTheme {
+        Error() {}
+    }
 }

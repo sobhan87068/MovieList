@@ -27,7 +27,6 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.movielist.base.ViewState
 import com.example.movielist.ui.designsystem.FloatingBannerContainer
 import com.example.movielist.ui.designsystem.GlowBg
 import com.example.movielist.ui.designsystem.LoadMoreError
@@ -79,7 +78,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Switcher(state: ViewState, onEndReached: () -> Unit) {
+fun Switcher(state: HomeState, loadMore: () -> Unit) {
     val scrollState = rememberLazyGridState()
     val endReached by remember {
         derivedStateOf {
@@ -89,40 +88,40 @@ fun Switcher(state: ViewState, onEndReached: () -> Unit) {
 
     LaunchedEffect(key1 = endReached) {
         if (endReached)
-            onEndReached()
+            loadMore()
     }
 
-    when (state) {
-        HomeState.Idle -> Text(text = "start")
-        is HomeState.Error -> Error(onEndReached)
-        is HomeState.NewPage -> {
-            FloatingBannerContainer(
-                state !is HomeState.NewPage.PaginationLoading || state.data.isNotEmpty(),
+    if (state == HomeState.Idle) {
+        Text(text = "start")
+    } else if (state is HomeState.Error && state.data.isEmpty()) {
+        Error(loadMore)
+    } else {
+        FloatingBannerContainer(
+            state !is HomeState.Loading || state.data.isNotEmpty(),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .zIndex(1f)
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .zIndex(1f)
-                ) {
-                    Home(
-                        movies = state.data, scrollState = scrollState,
-                        modifier = Modifier.weight(1f, fill = true)
+                Home(
+                    movies = state.data, scrollState = scrollState,
+                    modifier = Modifier.weight(1f, fill = true)
+                )
+
+                if (state is HomeState.Loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(vertical = 20.dp),
+                        color = MaterialTheme.colorScheme.secondary
                     )
-
-                    if (state is HomeState.NewPage.PaginationLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .padding(vertical = 20.dp),
-                            color = MaterialTheme.colorScheme.secondary
-                        )
-                    } else if (state is HomeState.NewPage.PaginationError) {
-                        LoadMoreError(message = state.message, onEndReached)
-                    }
+                } else if (state is HomeState.Error) {
+                    LoadMoreError(message = state.message, loadMore)
                 }
-
-                GlowBg()
             }
+
+            GlowBg()
         }
     }
 }
@@ -130,5 +129,5 @@ fun Switcher(state: ViewState, onEndReached: () -> Unit) {
 @Preview
 @Composable
 fun SwitcherPreview() {
-    Switcher(state = HomeState.NewPage.PaginationError(listOf())) {}
+    Switcher(state = HomeState.Error(listOf())) {}
 }

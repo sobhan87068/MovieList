@@ -3,23 +3,19 @@ package com.example.movielist.ui.home
 import com.example.movielist.base.ViewState
 import com.example.movielist.data.model.Movie
 
-sealed class HomeState : ViewState {
-    data object Idle : HomeState()
+sealed class HomeState(val data: List<Movie>) : ViewState {
 
-    data class Error(val message: String? = null) : HomeState()
+    data object Idle : HomeState(listOf())
+    data class Loading(
+        private val currentMovies: List<Movie>
+    ) : HomeState(currentMovies)
 
-    sealed class NewPage(val data: List<Movie>) : HomeState() {
-        data class PaginationLoading(
-            private val currentMovies: List<Movie>
-        ) : NewPage(currentMovies)
+    data class Success(
+        private val currentMovies: List<Movie>
+    ) : HomeState(currentMovies)
 
-        data class Success(
-            private val currentMovies: List<Movie>
-        ) : NewPage(currentMovies)
-
-        data class PaginationError(
-            private val currentMovies: List<Movie>,
-            val message: String? = null
-        ) : NewPage(currentMovies)
-    }
+    data class Error(
+        private val currentMovies: List<Movie>,
+        val message: String? = null
+    ) : HomeState(currentMovies)
 }
