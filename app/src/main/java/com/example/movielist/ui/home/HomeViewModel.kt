@@ -22,15 +22,13 @@ class HomeViewModel @Inject constructor(
     private var totalPages = 1
     private var job: Job? = null
 
-    private val currentMovies = getUpcomingUseCase()
-
     override fun handleAction(action: HomeAction) {
         if (totalPages < nextPage) return
         if (state.value is HomeState.Loading) return
 
         job?.cancel()
         job = viewModelScope.launch {
-            currentMovies.combine(
+            getUpcomingUseCase().combine(
                 retrieveMoviesPageUseCase(nextPage).onEach {
                     if (it is ApiResult.ApiSuccess) nextPage++
                 }
